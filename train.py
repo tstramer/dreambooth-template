@@ -18,7 +18,7 @@ MODEL_NAME = "replicate/dreambooth"
 MODEL_VERSION = "053b31c5f2a2648a37485ca0f0d543aa22c082cf4fdfceee689d7bfcce2b4013"
 
 
-def train(class_prompt, instance_prompt, training_data):
+def train(class_prompt, instance_prompt, training_data, optional_train_args):
     print(f"Training on Replicate using model {MODEL_NAME}@{MODEL_VERSION}")
     print(f"https://replicate.com/{MODEL_NAME}/versions/{MODEL_VERSION}")
     model = replicate.models.get(MODEL_NAME)
@@ -32,6 +32,7 @@ def train(class_prompt, instance_prompt, training_data):
             "instance_prompt": instance_prompt,
             "class_prompt": class_prompt,
             "instance_data": open(training_data, "rb"),
+            **(optional_train_args or {}),
         },
     )
 
@@ -130,6 +131,58 @@ if __name__ == "__main__":
         help="A ZIP file of images to use to train your model. The images should be in the root.",
     )
 
+    # optional training args
+    parser.add_argument(
+        "--learning-rate",
+        type=float,
+        default=1e-6,
+        help="Initial learning rate (after the potential warmup period) to use.",
+    )
+    parser.add_argument(
+        "--lr-scheduler",
+        type=str,
+        default="constant",
+        help="The scheduler type to use.",
+        choices=[
+            "linear",
+            "cosine",
+            "cosine_with_restarts",
+            "polynomial",
+            "constant",
+            "constant_with_warmup",
+        ],
+    )
+    parser.add_argument(
+        "--max-train-steps",
+        type=int,
+        default=500,
+        help="Total number of training steps to perform.  If provided, overrides num_train_epochs.",
+    )
+    parser.add_argument(
+        "--num-train-epochs",
+        type=int,
+        default=1,
+        help="Total number of training epochs to perform.",
+    )
+    parser.add_argument(
+        "--prior-loss-weight",
+        type=float,
+        default=1.0,
+        help="Weight of prior preservation loss.",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="A seed for reproducible training.",
+    )
+    parser.add_argument(
+        "--train-batch-size",
+        type=int,
+        default=1.0,
+        help="Batch size (per device) for the training dataloader.",
+    )
+
     args = parser.parse_args()
 
     print(repr(args))
@@ -151,8 +204,22 @@ if __name__ == "__main__":
             exit(1)
         training_data = _zip_images(images)
 
+    optional_train_args = {
+        "learning_rate": args.learning_rate,
+        "lr_scheduler": args.lr_scheduler,
+        "max_train_steps": args.max_train_steps,
+        "num_train_epochs": args.num_train_epochs,
+        "prior_loss_weight": args.prior_loss_weight,
+        "seed": args.seed,
+        "train_batch_size": args.train_batch_size,
+    }
+    optional_train_args = {
+        k: v for k, v in optional_train_args.items() if v is not None
+    }
+
     train(
         class_prompt=args.class_prompt,
         instance_prompt=args.instance_prompt,
         training_data=training_data,
+        optional_train_args=optional_train_args,
     )
