@@ -19,7 +19,7 @@ MODEL_VERSION = "053b31c5f2a2648a37485ca0f0d543aa22c082cf4fdfceee689d7bfcce2b401
 
 
 def train(class_prompt, instance_prompt, training_data, optional_train_args):
-    print(f"Training on Replicate using model {MODEL_NAME}@{MODEL_VERSION}")
+    print(f"Training on Replicate using model: {MODEL_NAME}@{MODEL_VERSION}")
     print(f"https://replicate.com/{MODEL_NAME}/versions/{MODEL_VERSION}")
     model = replicate.models.get(MODEL_NAME)
     version = model.versions.get(MODEL_VERSION)

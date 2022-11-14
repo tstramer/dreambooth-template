@@ -22,9 +22,9 @@ def publish(model_name: str, weights: Path) -> None:
         )
         exit(1)
 
-    if not _cog_installed() and not _install_cog():
-        print("Failed to publish model:\n" "  Cog is not installed.")
-        exit(1)
+    # if not _cog_installed() and not _install_cog():
+    #     print("Failed to publish model:\n" "  Cog is not installed.")
+    #     exit(1)
 
     # TODO use this to check if the user is in the beta
     if not _cog_login(api_token):
@@ -48,6 +48,7 @@ def publish(model_name: str, weights: Path) -> None:
     exit(0)
 
 
+# TODO: this doesn't work on 4.14.294-220.533.amzn2.aarch64
 def _cog_installed() -> bool:
     return _run_command(["command", "-v", "cog"])
 
