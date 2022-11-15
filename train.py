@@ -182,6 +182,11 @@ if __name__ == "__main__":
         default=1.0,
         help="Batch size (per device) for the training dataloader.",
     )
+    parser.add_argument(
+        "--gradient-checkpointing",
+        action="store_true",
+        help="Whether or not to use gradient checkpointing to save memory at the expense of slower backward pass.",
+    )
 
     args = parser.parse_args()
 
@@ -212,6 +217,7 @@ if __name__ == "__main__":
         "prior_loss_weight": args.prior_loss_weight,
         "seed": args.seed,
         "train_batch_size": args.train_batch_size,
+        "gradient_checkpointing": args.gradient_checkpointing,
     }
     optional_train_args = {
         k: v for k, v in optional_train_args.items() if v is not None
