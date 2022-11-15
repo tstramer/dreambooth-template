@@ -63,7 +63,9 @@ def train(class_prompt, instance_prompt, training_data, optional_train_args):
                 logs = prediction.logs
 
     if prediction.status != "succeeded":
-        print(f"Training failed: {prediction.error}")
+        print(
+            f"Training failed: id={prediction.id}, status={prediction.status}, error={prediction.error}"
+        )
         exit(1)
 
     weights_url = prediction.output
