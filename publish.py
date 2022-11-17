@@ -53,6 +53,10 @@ def publish(model_name: str, weights: Path) -> None:
     if not _build_model(model_name, tag_name):
         exit(1)
 
+    if not _cog_login(api_token):
+        print("Failed to publish model:\n" "  Could not log in to Replicate with Cog.")
+        exit(1)
+
     if not _push_model(model_name, tag_name):
         exit(1)
 
