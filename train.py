@@ -141,9 +141,15 @@ if __name__ == "__main__":
         help="Initial learning rate (after the potential warmup period) to use.",
     )
     parser.add_argument(
+        "--lr-warmup-steps",
+        type=float,
+        default=200,
+        help="Number of steps for the warmup in the lr scheduler.",
+    )
+    parser.add_argument(
         "--lr-scheduler",
         type=str,
-        default="constant",
+        default="polynomial",
         help="The scheduler type to use.",
         choices=[
             "linear",
@@ -213,6 +219,7 @@ if __name__ == "__main__":
 
     optional_train_args = {
         "learning_rate": args.learning_rate,
+        "lr_warmup_steps": args.lr_warmup_steps,
         "lr_scheduler": args.lr_scheduler,
         "max_train_steps": args.max_train_steps,
         "num_train_epochs": args.num_train_epochs,
