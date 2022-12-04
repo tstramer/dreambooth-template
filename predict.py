@@ -35,6 +35,10 @@ class Predictor(BasePredictor):
             description="Input prompt",
             default="a magical princess with golden hair, archer style",
         ),
+        negative_prompt: str = Input(
+            description="The prompt NOT to guide the image generation. Ignored when not using guidance",
+            default=None,
+        ),
         width: int = Input(
             description="Width of output image. Maximum size is 1024x768 or 768x1024 because of memory limits",
             choices=[128, 256, 512, 768, 1024],
@@ -75,6 +79,9 @@ class Predictor(BasePredictor):
 
         output = self.pipe(
             prompt=[prompt] * num_outputs,
+            negative_prompt=[negative_prompt] * num_outputs
+            if negative_prompt is not None
+            else None,
             width=width,
             height=height,
             num_inference_steps=num_inference_steps,
